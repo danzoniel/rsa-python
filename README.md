@@ -51,7 +51,7 @@ No terminal do servidor, após receber o ciphertext, a mensagem decriptografada 
 - Calcula N = p * q e a função totiente φ(N) = (p-1) * (q-1).
 - Define o expoente público e (geralmente 65537) e calcula o inverso modular para obter a chave privada d.
 
-##Comunicação TCP:
+## Comunicação TCP:
 - Configura um socket TCP para escutar em localhost na porta 65432.
 - Envia a chave pública (no formato JSON) para o cliente.
 - Recebe o ciphertext, decripta a mensagem e exibe o resultado.
