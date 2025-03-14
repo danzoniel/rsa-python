@@ -1,23 +1,27 @@
-# Projeto RSA com Comunicação TCP
+# Projeto RSA com Comunicação TCP - Versão Avançada
 
-Este projeto implementa o algoritmo RSA "from scratch" com comunicação via TCP. Ele é composto por dois arquivos Python:
-
-- `servidor.py`
-- `cliente.py`
+Este projeto implementa um algoritmo RSA "from scratch" com comunicação via TCP, agora incluindo a troca de chaves do cliente e processamento adicional da mensagem. A comunicação ocorre entre dois arquivos Python: `servidor.py` e `cliente.py`.
 
 ## Visão Geral
 
 ### Servidor (`servidor.py`)
-- Gera as chaves RSA com um módulo de 4096 bits (utilizando dois primos de 2048 bits cada).
-- Envia a chave pública para o cliente via TCP.
-- Recebe o ciphertext criptografado enviado pelo cliente, decripta a mensagem e exibe o texto original.
+- Gera seu par de chaves RSA.
+- Aguarda conexões no host `10.1.70.34` e porta `65432`.
+- Envia sua chave pública para o cliente.
+- Recebe a chave pública do cliente.
+- Recebe a mensagem criptografada (ciphertext) enviada pelo cliente e a decripta usando sua chave privada.
+- Converte a mensagem decriptografada para maiúsculas.
+- Criptografa a mensagem em maiúsculas utilizando a chave pública do cliente.
+- Envia o novo ciphertext de volta para o cliente.
 
 ### Cliente (`cliente.py`)
-- Conecta-se ao servidor via TCP.
+- Gera seu próprio par de chaves RSA (chave pública e chave privada).
+- Conecta-se ao servidor no host `10.1.70.34` e porta `65432`.
 - Recebe a chave pública do servidor.
-- Criptografa a mensagem:
-  > "The information security is of significant importance to ensure the privacy of communications"
-- Envia o ciphertext de volta para o servidor.
+- Envia sua chave pública para o servidor.
+- Criptografa uma mensagem original usando a chave pública do servidor e a envia.
+- Recebe o ciphertext modificado (mensagem em maiúsculas criptografada com sua chave pública) do servidor.
+- Decripta a mensagem recebida usando sua chave privada, obtendo a mensagem final.
 
 ## Requisitos
 
@@ -33,35 +37,25 @@ Abra um terminal e execute:
 python servidor.py
 ```
 
+O servidor gerará suas chaves RSA e ficará aguardando conexões no host 10.1.70.34 e porta 65432.
+
 ### 2. Executar o Cliente
-Em outro terminal (ou em outra máquina, ajustando o endereço IP se necessário), execute:
+Em outro terminal (ou em outra máquina, certificando-se de que o host 10.1.70.34 é acessível), execute:
+
 ```
 python cliente.py
 ```
-O cliente se conectará ao servidor, receberá a chave pública, criptografará a mensagem e enviará o ciphertext para o servidor.
+O cliente gerará seu par de chaves RSA, conectará ao servidor, realizará a troca de chaves e enviará a mensagem criptografada.
 
-### 3. Verificação
-No terminal do servidor, após receber o ciphertext, a mensagem decriptografada será exibida, confirmando o sucesso do processo de criptografia e decriptação.
+### 3. Fluxo de Comunicação
 
-## Estrutura do Código
-##Servidor (servidor.py)
+## Troca de Chaves:
+- O servidor envia sua chave pública para o cliente.
+- O cliente envia sua chave pública para o servidor.
 
-## Geração de Primos e Chaves RSA:
-- Utiliza o teste de primalidade Miller-Rabin para gerar primos.
-- Calcula N = p * q e a função totiente φ(N) = (p-1) * (q-1).
-- Define o expoente público e (geralmente 65537) e calcula o inverso modular para obter a chave privada d.
+## Envio e Processamento da Mensagem:
+- O cliente criptografa uma mensagem original usando a chave pública do servidor e a envia.
+- O servidor decripta a mensagem com sua chave privada, converte todos os caracteres para maiúsculas, recriptografa a mensagem com a chave pública do cliente e a envia de volta.
 
-## Comunicação TCP:
-- Configura um socket TCP para escutar em localhost na porta 65432.
-- Envia a chave pública (no formato JSON) para o cliente.
-- Recebe o ciphertext, decripta a mensagem e exibe o resultado.
-
-## Cliente (cliente.py)
-## Comunicação TCP:
-- Conecta-se ao servidor utilizando um socket TCP.
-- Recebe a chave pública enviada pelo servidor (em formato JSON).
-
-## Criptografia:
-- Converte a mensagem em um inteiro.
-- Aplica a fórmula RSA (C = M^e mod n) para criptografar a mensagem.
-- Envia o ciphertext para o servidor.
+## Recepção e Decriptação:
+- O cliente decripta a mensagem recebida utilizando sua chave privada, obtendo a mensagem final em maiúsculas.
